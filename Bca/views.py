@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from .models import Student
 from .serializers import StudentSerializers,RegisterSerialIzers
+from rest_framework.views import APIView
+
 # Create your views here.
 
 
@@ -78,6 +80,8 @@ def registerserialzers(request):
 
 
 
+
+
 @api_view(['POST','GET','PUT'])
 
 def StudentDetails(request):
@@ -108,3 +112,49 @@ def StudentDetails(request):
 
         return Response(serializers.errors)
 
+
+
+
+
+class Student_View(APIView):
+    def get(self,request):
+        st=Student.objects.all()
+        serializer=StudentSerializers(st,many=True)
+        return  Response(serializer.data)
+    
+
+    def post(self,request):
+        serializers=StudentSerializers(data=request.data)
+
+        if serializers.is_valid():
+            serializers.save()
+            return Response({"message":"sucess"})
+        
+        return Response(serializers.errors)
+    
+
+    def put(self,request):
+        id=self.request.GET.get('id')
+        st=get_object_or_404(Student,id=id)
+
+        serialzers=StudentSerializers(st,data=request.data)
+
+        if serialzers.is_valid():
+            serialzers.save()
+            return Response({"sucess":"data  updated sucesfully"})
+        
+
+        return Response(serialzers.errors)
+    
+
+    def patch(self,request):
+        id=self.request.GET.get("id")
+        st=get_object_or_404(Student,id=id)
+
+        serializers=StudentSerializers(st,data=request.data,partial=True)
+
+        if serializers.is_valid():
+            serializers.save()
+            return Response("data patched sucessfully")
+        
+        return Response(serializers.errors)

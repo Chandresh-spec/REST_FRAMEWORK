@@ -53,10 +53,10 @@ class StudentSerializers(serializers.ModelSerializer):
         return Student.objects.create(**validated_data)
     
 
-    def update(self, instance, validated_data):
-        instance.age=validated_data.get("age",instance.age)
-        instance.save()
-        return instance
+    # def update(self, instance, validated_data):
+        # instance.age=validated_data.get("age",instance.age)
+        # instance.save()
+        # return instance
       
 
         
