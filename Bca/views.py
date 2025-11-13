@@ -5,6 +5,7 @@ from rest_framework.renderers import JSONRenderer
 from .models import Student
 from .serializers import StudentSerializers,RegisterSerialIzers
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 # Create your views here.
 
@@ -158,3 +159,20 @@ class Student_View(APIView):
             return Response("data patched sucessfully")
         
         return Response(serializers.errors)
+    
+
+    def delete(self,request):
+        id=self.request.GET.get("id")
+        st=get_object_or_404(Student,id=id)
+
+
+        st.delete()
+        return Response({"sucess":"data deleted sucesfully"})
+
+
+
+class StudentViewSet(ModelViewSet):
+    queryset=Student.objects.all()
+    serializer_class=StudentSerializers
+
+    
