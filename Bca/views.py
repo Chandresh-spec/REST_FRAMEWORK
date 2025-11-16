@@ -1,12 +1,18 @@
 from rest_framework.views import APIView
 from .models import Student
-from .serializers import StudentSerializers,StudentSerializer
+from .serializers import StudentSerializers,StudentSerializer,LoginSerializer
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework.authtoken.models import Token
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 class Student_View(APIView):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
 
     def get(self,request):
 
@@ -104,3 +110,38 @@ class StudentView(APIView):
             "message":"user  created sucesfully"
             },status=status.HTTP_200_OK
         )
+
+
+class LoginView(APIView):
+    def post(self,request):
+        serializer=LoginSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(
+                {
+                    "message":"validation failed",
+                    "status ":False,
+                    "errors":serializer.errors
+                },status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        username=serializer.validated_data['username']
+        password=serializer.validated_data['password']
+
+        user=authenticate(username=username,password=password)
+
+        if not user:
+            return Response(
+                {
+                    "status":False,
+                    "message":"usernot found"
+
+                },status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        token = Token.objects.create(user=user)
+        return Response(
+            {"status": True, "message": "Login successful"},
+            status=status.HTTP_200_OK
+        )
+        

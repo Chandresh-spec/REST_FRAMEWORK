@@ -83,6 +83,11 @@ class StudentSerializer(serializers.Serializer):
         user.save()
 
         return user
+
+
+class LoginSerializer(serializers.Serializer):
+    username=serializers.CharField()
+    password=serializers.CharField()
         
         
         
