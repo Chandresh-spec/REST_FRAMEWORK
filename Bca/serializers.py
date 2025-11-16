@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Student,Color
-
+from django.contrib.auth.models import User
+from rest_framework.response import Response
 
 class RegisterSerialIzers(serializers.Serializer):
     name=serializers.CharField()
@@ -61,3 +62,27 @@ class StudentSerializers(serializers.ModelSerializer):
 
         
 
+class StudentSerializer(serializers.Serializer):
+    username=serializers.CharField()
+    email=serializers.EmailField()
+    password=serializers.CharField()
+
+
+    def validate(self, attrs):
+        if User.objects.filter(username=attrs['username']).exists():
+            raise serializers.ValidationError({"username":"useralready exist"})
+        
+        if User.objects.filter(email=attrs['email']).exists():
+            raise serializers.ValidationError({"email":" email already exist"})
+        
+        return attrs
+
+    def create(self, validated_data):
+        user=User.objects.create(username=validated_data['username'],email=validated_data['email'])
+        user.set_password(validated_data['password'])
+        user.save()
+
+        return user
+        
+        
+        
