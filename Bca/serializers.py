@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student,Color
+from .models import Student,Color,Info
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 
@@ -90,4 +90,18 @@ class LoginSerializer(serializers.Serializer):
     password=serializers.CharField()
         
         
+
+
+class Infoserializer(serializers.ModelSerializer):
+    class Meta:
+        model=Info
+        fields="__all__"
+
+    
+
+    def validate_name(self,value):
+        if not value.isalpha():
+            raise serializers.ValidationError("name must be  in character")
         
+        return value
+                

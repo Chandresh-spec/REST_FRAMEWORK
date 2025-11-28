@@ -29,3 +29,18 @@ class Student(models.Model):
 
 
 
+
+class Info(models.Model):
+    CURRENT_YEAR=(
+        ('1','1'),
+        ('2','2'),
+        ('3','3'),
+    )
+    name=models.CharField(max_length=100,null=True,blank=True)
+    rno=models.CharField(max_length=10,null=True,blank=True)
+    year=models.CharField(choices=CURRENT_YEAR,null=True,blank=True)
+
+
+    def __str__(self):
+        return self.name
+    

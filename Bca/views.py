@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
-from .models import Student
-from .serializers import StudentSerializers,StudentSerializer,LoginSerializer
+from .models import Student,Info
+from .serializers import StudentSerializers,StudentSerializer,LoginSerializer,Infoserializer
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
@@ -9,10 +9,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-
+from  rest_framework.decorators import api_view
 class Student_View(APIView):
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+    # permission_classes=[IsAuthenticated]
+    # authentication_classes=[TokenAuthentication]
 
     def get(self,request):
 
@@ -145,3 +145,88 @@ class LoginView(APIView):
             status=status.HTTP_200_OK
         )
         
+
+
+
+class Info_views(APIView):
+    def get(self,request):
+        info=Info.objects.all()
+        serializer=Infoserializer(info,many=True)
+
+        return Response(
+            serializer.data
+        )
+    
+
+    def post(self,request):
+        serialzer=Infoserializer(data=request.data)
+
+        if not serialzer.is_valid():
+            return Response({
+                "status":False,
+                "message":"validation fails",
+                "errors":serialzer.errors
+            },status=status.HTTP_400_BAD_REQUEST)
+        
+
+        serialzer.save()
+        return Response({
+            "status":True,
+            "message":"saved sucessfully",
+            },status=status.HTTP_200_OK)
+    
+    def put(self,request):
+        id=request.GET.get('id')
+        info=get_object_or_404(Info,id=id)
+
+        serializer=Infoserializer(info,data=request.data)
+        
+        if not serializer.is_valid():
+            return Response({
+                "status":False,
+                "message":"validation fails",
+                "errors":serializer.errors
+            },status=status.HTTP_400_BAD_REQUEST)
+        
+
+        serializer.save()
+        return Response({
+            "status":True,
+            "message":"saved sucessfully",
+            },status=status.HTTP_200_OK)
+    
+    def patch(self,request):
+        id=request.GET.get('id')
+        info=get_object_or_404(Info,id=id)
+        serializer=Infoserializer(info,data=request.data,partial=True)
+    
+        if not serializer.is_valid():
+             return Response({
+                "status":False,
+                "message":"validation fails",
+                "errors":serializer.errors
+            },status=status.HTTP_400_BAD_REQUEST)
+    
+        serializer.save()
+        return Response({
+             "status":True,
+             "message":"saved sucessfully",
+        },status=status.HTTP_200_OK)
+    
+
+    def delete(self,request):
+        id=request.GET.get('id')
+        obj=get_object_or_404(Info,id=id)
+
+        if obj:
+            obj.delete()
+            return Response({
+                "message":"deleted sucesfully"
+                
+            },status=status.HTTP_200_OK)
+        
+        return Response({
+            "message":"object not found"
+        },status=status.HTTP_400_BAD_REQUEST)
+
+
