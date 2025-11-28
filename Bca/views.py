@@ -230,3 +230,9 @@ class Info_views(APIView):
         },status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
+
+class Product_views(viewsets.ReadOnlyModelViewSet):
+    queryset=Info.objects.all()
+    serializer_class=Infoserializer
