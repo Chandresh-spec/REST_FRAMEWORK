@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student,Color,Info
+from .models import Student,Color,Info,Teacher
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 
@@ -105,3 +105,44 @@ class Infoserializer(serializers.ModelSerializer):
         
         return value
                 
+
+    
+class TeacherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Teacher
+        fields="__all__"
+    
+
+    def validate_name(self,value):
+        if not value.isalpha():
+            raise serializers.ValidationError("name must be in alphabet")
+        
+        return value
+    
+    def validate(self,attrs):
+        if attrs['experience']>0 and attrs['branch'] in ['bca','bcom','bsc']:
+            return attrs
+        raise serializers.ValidationError("experience must be greater than 2 and barnch  must ['bca','bcom','bsc']")
+    
+
+class LoginTeacherserializer(serializers.Serializer):
+      username=serializers.CharField()
+      email=serializers.EmailField()
+      password=serializers.CharField()
+
+
+      def create(self, validated_data):
+          user=User.objects.create(username=validated_data['username'],email=validated_data['email'])
+          user.set_password(validated_data['password'])
+          user.save()
+          return user
+      
+      def update(self, instance, validated_data):
+          
+
+
+class Logintseerializer(serializers.Serializer):
+    username=serializers.CharField()
+    password=serializers.CharField()
+        
+

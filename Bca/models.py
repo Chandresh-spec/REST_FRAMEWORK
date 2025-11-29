@@ -43,4 +43,10 @@ class Info(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
+
+class Teacher(models.Model):
+    name=models.CharField(max_length=100,null=True,blank=True)
+    branch=models.CharField(max_length=100,null=True,blank=True)
+    experience=models.IntegerField()

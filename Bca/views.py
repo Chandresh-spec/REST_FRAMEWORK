@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
-from .models import Student,Info
-from .serializers import StudentSerializers,StudentSerializer,LoginSerializer,Infoserializer
+from .models import Student,Info,Teacher
+from .serializers import StudentSerializers,StudentSerializer,LoginSerializer,Infoserializer,TeacherSerializer,LoginTeacherserializer,Logintseerializer
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
@@ -236,3 +236,94 @@ class Info_views(APIView):
 class Product_views(viewsets.ReadOnlyModelViewSet):
     queryset=Info.objects.all()
     serializer_class=Infoserializer
+
+
+
+
+@api_view(['GET','POST','PUT'])
+def teacher_view(request):
+    if request.method=="GET":
+        items=Teacher.objects.all()
+        serializer=TeacherSerializer(items,many=True)
+
+        return Response(serializer.data)
+    
+    elif request.method=="POST":
+        serializer=TeacherSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message":"sucessfull"
+            },status=status.HTTP_200_OK)
+        
+        return Response({
+            "message":"error found",
+            "error":serializer.errors
+        },status=status.HTTP_400_BAD_REQUEST)
+
+
+    elif request.method=="PUT":
+        id=request.GET.get('id')
+
+        tc=get_object_or_404(Teacher,id=id)
+
+        serializer=TeacherSerializer(tc,data=request.data)
+        if serializer.is_valid():
+           serializer.save()
+           return Response({
+               "message":"sucessfull"
+            },status=status.HTTP_200_OK)
+        
+        return Response({
+          "message":"error found",
+          "error":serializer.errors
+        },status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class TeacherLogin(APIView):
+
+
+    def post(self,request):
+        serializer=LoginTeacherserializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                "status":False,
+                "message":"plz enter the right details",
+                "error":serializer.errors
+            })
+        
+        serializer.save()
+        return Response({
+            "status":True,
+            "message":"user registered sucesfully"
+        },status=status.HTTP_200_OK)
+
+
+
+class Login_views(APIView):
+    def post(self,request):
+        serializer=Logintseerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            username=serializer.validated_data['username']
+            password=serializer.validated_data['password']
+            user=authenticate(username=username,password=password)
+            print(user)
+
+            if user:
+                return Response({
+                    "status":True,
+                    "message":"user logged in"
+                },status=status.HTTP_200_OK)
+            
+            return Response({
+                "message":"user does not exits"
+            })
+        
+        return Response({
+            "status":False,
+            "error":serializer.errors
+        },status=status.HTTP_400_BAD_REQUEST)
