@@ -50,3 +50,17 @@ class Teacher(models.Model):
     name=models.CharField(max_length=100,null=True,blank=True)
     branch=models.CharField(max_length=100,null=True,blank=True)
     experience=models.IntegerField()
+
+
+
+
+
+
+
+
+class Profile(models.Model):
+    username = models.CharField(max_length=50)
+    email = models.EmailField(unique=True)
+    bio = models.TextField(blank=True, null=True)
+    age = models.IntegerField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)

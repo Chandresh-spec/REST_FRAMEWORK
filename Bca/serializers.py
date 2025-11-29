@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student,Color,Info,Teacher
+from .models import Student,Color,Info,Teacher,Profile
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 
@@ -113,17 +113,39 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields="__all__"
     
 
+    def to_internal_value(self,data):
+        data=data.copy()
+        branch=data.get('branch')
+        if isinstance(branch,str):
+            if branch.startswith('1bca'):
+               data['branch']='1YEAR'
+            elif branch.startswith('2bca'):
+               data['branch']='2YEAR'
+            else:
+               data['branch']='3YEAR'
+     
+        return super().to_internal_value(data)
+    
+
     def validate_name(self,value):
         if not value.isalpha():
             raise serializers.ValidationError("name must be in alphabet")
         
         return value
     
-    def validate(self,attrs):
-        if attrs['experience']>0 and attrs['branch'] in ['bca','bcom','bsc']:
-            return attrs
-        raise serializers.ValidationError("experience must be greater than 2 and barnch  must ['bca','bcom','bsc']")
-    
+    # def validate(self,attrs):
+        # if attrs['experience']>0 and attrs['branch'] in ['2bca','2bcom','1bsc']:
+            # return attrs
+        # raise serializers.ValidationError("experience must be greater than 0 and barnch  must ['bca','bcom','bsc']")
+    # 
+
+
+    def to_representation(self, instance):
+        rep=super().to_representation(instance)
+        rep['experienc']=f"{instance.branch} experince of {instance.experience}"
+
+        return rep
+
 
 class LoginTeacherserializer(serializers.Serializer):
       username=serializers.CharField()
@@ -138,6 +160,7 @@ class LoginTeacherserializer(serializers.Serializer):
           return user
       
       def update(self, instance, validated_data):
+          pass
           
 
 
@@ -145,4 +168,24 @@ class Logintseerializer(serializers.Serializer):
     username=serializers.CharField()
     password=serializers.CharField()
         
+
+
+
+
+
+# class Exampleserializer(serializers.ModelSerializer):
+    # created_at=serializers.DateTimeField(read_only=True)
+    # secret_note = serializers.CharField(write_only=True, required=False)
+    # username=serializers.CharField(required=True)
+    # age=serializers.IntegerField(allow_null=True)
+    # bio=serializers.CharField(allow_blank=True)
+# 
+    # role=serializers.CharField(default="member")
+    # email_add
+# 
+
+
+    # class Meta:
+        # model=Profile
+
 
