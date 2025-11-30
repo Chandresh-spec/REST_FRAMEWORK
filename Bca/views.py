@@ -329,3 +329,13 @@ class Login_views(APIView):
             "status":False,
             "error":serializer.errors
         },status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+# from rest_framework.authtoken.views import ObtainAuthToken
+# class CustomeAuth(ObtainAuthToken):
+
+    # def post(self,request,*args, **kwargs):
+        # serializer=
+
+    
