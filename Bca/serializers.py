@@ -142,7 +142,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep=super().to_representation(instance)
-        rep['experienc']=f"{instance.branch} experince of {instance.experience}"
+        rep['experience']=f"{instance.branch} experince of {instance.experience}"
 
         return rep
 

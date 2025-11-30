@@ -11,8 +11,6 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from  rest_framework.decorators import api_view
 class Student_View(APIView):
-    # permission_classes=[IsAuthenticated]
-    # authentication_classes=[TokenAuthentication]
 
     def get(self,request):
 
@@ -314,14 +312,17 @@ class Login_views(APIView):
             print(user)
 
             if user:
+                token_obj=Token.objects.create(user=user)
                 return Response({
                     "status":True,
-                    "message":"user logged in"
+                    "message":"user logged in",
+                    "token":token_obj.key
                 },status=status.HTTP_200_OK)
             
             return Response({
                 "message":"user does not exits"
             })
+            
         
         return Response({
             "status":False,
