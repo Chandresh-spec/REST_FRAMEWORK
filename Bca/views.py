@@ -137,7 +137,6 @@ class LoginView(APIView):
                 },status=status.HTTP_400_BAD_REQUEST
             )
         
-        token = Token.objects.create(user=user)
         return Response(
             {"status": True, "message": "Login successful"},
             status=status.HTTP_200_OK
@@ -147,6 +146,8 @@ class LoginView(APIView):
 
 
 class Info_views(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self,request):
         info=Info.objects.all()
         serializer=Infoserializer(info,many=True)
@@ -312,7 +313,7 @@ class Login_views(APIView):
             print(user)
 
             if user:
-                token_obj=Token.objects.create(user=user)
+                token_obj,_=Token.objects.get_or_create(user=user)
                 return Response({
                     "status":True,
                     "message":"user logged in",
