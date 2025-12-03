@@ -171,21 +171,23 @@ class Logintseerializer(serializers.Serializer):
 
 
 
+from rest_framework_simplejwt.tokens import RefreshToken
 
+class CustomStudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields=['username','password']
 
-# class Exampleserializer(serializers.ModelSerializer):
-    # created_at=serializers.DateTimeField(read_only=True)
-    # secret_note = serializers.CharField(write_only=True, required=False)
-    # username=serializers.CharField(required=True)
-    # age=serializers.IntegerField(allow_null=True)
-    # bio=serializers.CharField(allow_blank=True)
-# 
-    # role=serializers.CharField(default="member")
-    # email_add
-# 
+    
 
+    def to_representation(self, instance):
+        data= super().to_representation(instance)
 
-    # class Meta:
-        # model=Profile
+        refresh=RefreshToken.for_user(instance)
 
+        data['tokens']={
+            "access":str(refresh.access_token),
+            "refresh":str(refresh)
+        }
 
+        return data

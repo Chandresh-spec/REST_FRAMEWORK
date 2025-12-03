@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from .models import Student,Info,Teacher
-from .serializers import StudentSerializers,StudentSerializer,LoginSerializer,Infoserializer,TeacherSerializer,LoginTeacherserializer,Logintseerializer
+from .serializers import StudentSerializers,StudentSerializer,LoginSerializer,Infoserializer,TeacherSerializer,LoginTeacherserializer,Logintseerializer,CustomStudentSerializer
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
@@ -331,11 +331,66 @@ class Login_views(APIView):
         },status=status.HTTP_400_BAD_REQUEST)
     
 
+class Student_api(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        return Response({
+            "status":"sucess"
+        })
 
-# from rest_framework.authtoken.views import ObtainAuthToken
-# class CustomeAuth(ObtainAuthToken):
 
-    # def post(self,request,*args, **kwargs):
-        # serializer=
 
-    
+
+class Tester(APIView):
+    def post(self,request):
+        serializer=CustomStudentSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response({
+                "status":False,
+                "message":"user doest not exist"
+                
+                            
+                })
+        serializer.save()
+        return Response({
+            serializer.data
+        })
+
+
+from rest_framework_simplejwt.tokens import RefreshToken
+class CustomLoginAPI(APIView):
+    def post(self,request):
+        serializer=Logintseerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response({
+                "status":False,
+                "message":"plz enter the valid  name"
+            })
+        
+        user=authenticate(username=serializer.validated_data["username"],password=serializer.validated_data['password'])
+
+        if not user:
+            return Response({
+                "message":"user does not exist"
+            })
+        
+        refresh=RefreshToken.for_user(user)
+
+        return Response({
+            "message":"user logged in ",
+            "access_token":str(refresh.access_token),
+            "refresh_token":str(refresh),
+        })
+        
+
+
+
+class basic_view(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self,request):
+        data=Teacher.objects.all()
+        serializer=TeacherSerializer(data,many=True)
+        return Response(serializer.data)
