@@ -47,9 +47,16 @@ class Info(models.Model):
 
 
 class Teacher(models.Model):
+    ROLE_CHOICES=(
+        ('admin','admin'),
+        ('staff','staff'),
+        ('principal','principal'),
+
+    )
     name=models.CharField(max_length=100,null=True,blank=True)
     branch=models.CharField(max_length=100,null=True,blank=True)
     experience=models.IntegerField()
+    role=models.CharField(choices=ROLE_CHOICES,default='admin',null=True,blank=True)
 
 
 

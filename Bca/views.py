@@ -10,6 +10,7 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from  rest_framework.decorators import api_view
+from .permission import IsAdminUser
 class Student_View(APIView):
 
     def get(self,request):
@@ -394,3 +395,11 @@ class basic_view(APIView):
         data=Teacher.objects.all()
         serializer=TeacherSerializer(data,many=True)
         return Response(serializer.data)
+    
+
+
+class AdminOnly_view(APIView):
+    permission_classes=[IsAuthenticated,IsAdminUser]
+
+    def get(self,request):
+        return Response({"sucess":"sucess"})
