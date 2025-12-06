@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'Bca',
     'rest_framework.authtoken',
+    'doctor',
 ]
 
 MIDDLEWARE = [
